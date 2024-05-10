@@ -1,0 +1,83 @@
+--QS. avg (total_expense) of each gender
+SELECT sex, avg (total_expense)
+from monthly_member_totals
+GROUP BY sex
+monthly_member_totals
+
+-- QS. Pattern of ordering in each month
+Select monthname(date) AS months, COUNT(member_id)
+FROM orders
+GROUP BY months
+orders
+
+-- Qs. Average Monthly expense of Males vs Females? 
+SELECT sex, avg (total_expense)
+from monthly_member_totals
+GROUP BY sex
+monthly_member_totals
+
+-- Rank meal types for each restaurant according to its popularity/demand among customers 
+WITH B AS (
+SELECT restaurant_id,meal_type, count(meal_type_id) AS order_count
+FROM meals
+JOIN meal_types
+ON meals.meal_type_id = meal_types.id
+GROUP BY restaurant_id,meal_type, meal_type_id)
+SELECT * , Rank()over(partition by restaurant_id ORDER BY order_count desc) AS popularity
+FROM B 
+meals
+
+-- Qs TOTAL revenue of each restaurant? 
+-- Qs TOP 3 restaurants based on its revenue
+SELECT  o.restaurant_id, sum(round(total_order))
+FROM capstone_project.orders O
+JOIN order_details OD
+ON O.ID=OD.order_id
+JOIN meals
+ON OD.meal_id=meals.id
+group by o.restaurant_id
+order by restaurant_id
+
+
+-- Qs Which gender orders more?
+WITH A AS (SELECT sex , sum(order_count) AS Total_orders
+FROM monthly_member_totals
+GROUP BY sex )
+SELECT * ,  rank() OVER (order by Total_orders) AS Ranking
+FROM A
+
+-- no of successful and unsuccessful orders made by each restaurant
+
+WITH X AS (SELECT restaurant_id, CASE WHEN total_order > 0 then 'successful' else 'unsuccessful' end ABC  
+FROM orders
+GROUP BY restaurant_id, abc)
+SELECT restaurant_id ,ABC, count(ABC)
+FROM X
+GROUP BY restaurant_id, ABC
+ORDER BY restaurant_id
+
+WITH MNO AS (WITH ABC AS (SELECT id, CASE WHEN total_order > 0 then 'successful' else 'unsuccessful' end order_status
+FROM orders) 
+SELECT order_status, count(id) AS numbers
+FROM ABC
+GROUP BY order_status)
+SELECT  order_status, count(numbers)
+FROM MNO
+GROUP BY order_status,restaurant_id
+
+
+WITH ABC AS ( SELECT id, CASE WHEN total_order > 0 then 'successful' else 'unsuccessful' end order_status
+FROM orders) 
+SELECT order_status, count(id) AS numbers
+FROM ABC
+GROUP BY order_status
+
+WITH X AS (SELECT restaurant_id, CASE WHEN total_order > 0 then 'successful' else 'unsuccessful' end ABC  
+FROM orders
+GROUP BY restaurant_id, abc)
+SELECT ABC, count(ABC)
+FROM X
+GROUP BY  ABC
+ORDER BY restaurant_id
+
+
